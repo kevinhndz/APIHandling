@@ -1,12 +1,9 @@
-import os
 from datetime import datetime, timedelta, timezone
-from dotenv import load_dotenv
 from fastapi import HTTPException, status
 from jose import JWTError, jwt
+from core.config import settings
 
-load_dotenv()
-
-KEY = os.getenv("SECRET_KEY")
+KEY = settings.SECRET_KEY
 
 
 def crear_token(user: str, id_user: int, rol: str) -> str:
@@ -19,8 +16,7 @@ def crear_token(user: str, id_user: int, rol: str) -> str:
         "exp": expires
     }
 
-    
-    token = jwt.encode(data, KEY, algorithm="HS256")
+    token = jwt.encode(data, KEY, algorithm=settings.ALGORITHM)
 
     return token
 
@@ -30,7 +26,7 @@ def verificar_token(token: str):
         user_data = jwt.decode(
             token,
             KEY,
-            algorithms=["HS256"]
+            algorithms=[settings.ALGORITHM]
         )
         return user_data
 

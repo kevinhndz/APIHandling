@@ -18,7 +18,8 @@ router = APIRouter(
 @router.post("/", status_code=status.HTTP_201_CREATED)
 def crear_nuevo_cliente(
     json: Revisar_JSON_Crear_Nuevo_Cliente, 
-    db: Session = Depends(abrir_puerta)
+    db: Session = Depends(abrir_puerta),
+    usuario: dict = Depends(permiso_admin)
 ):
     return service.crear_cliente(db, json)
 
@@ -26,7 +27,8 @@ def crear_nuevo_cliente(
 def obtener_clientes(
     salto: int = Query(default=0, ge=0),
     limite: int = Query(default=10, ge=1),
-    db: Session = Depends(abrir_puerta)
+    db: Session = Depends(abrir_puerta),
+    usuario: dict = Depends(permiso_admin)
 ):
     return service.obtener_clientes(db, salto, limite)
 

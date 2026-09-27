@@ -1,51 +1,41 @@
-# modules/Clients/repository.py
 from sqlalchemy.orm import Session
-from modules.Clients.model import Clients
+from modules.productos.model import Productos
 
-class ClientsRepository():
+class ProductosRepository():
     
     @staticmethod
-    def revisar_duplicados(db: Session, json: dict) -> dict:
-        check = db.query(Clients).filter(Clients.email == json.email).first()
+    def revisar_duplicados_codigo(db: Session, codigo: str) -> dict:
+        check = db.query(Productos).filter(Productos.codigo == codigo).first()
         return check
         
     @staticmethod
-    def crear_nuevo_user(db: Session, new_user: dict) -> dict:
-        db.add(new_user)
+    def crear_nuevo_producto(db: Session, new_product: dict) -> dict:
+        db.add(new_product)
         db.commit()          
-        db.refresh(new_user) 
-        return new_user
-    
-    @staticmethod
-    def crear_nuevo_customer(db: Session, new_customer: dict) -> dict:
-        db.add(new_customer)
-        db.commit()         
-        db.refresh(new_customer)
-        return new_customer
-    
-    @staticmethod
-    def revisar_duplicados_por_ID_put(db: Session, id: int) -> dict:
-        check = db.query(Clients).filter(Clients.id == id).first()
-        return check
-    
-    @staticmethod
-    def guardar_cambios_put(db: Session, cliente_editado: dict) -> dict:
-        db.commit()
-        db.refresh(cliente_editado)
-        return cliente_editado
+        db.refresh(new_product) 
+        return new_product
 
+    @staticmethod
+    def obtener_productos_paginados(db: Session, salto: int, limite: int):
+        return db.query(Productos).offset(salto).limit(limite).all()
 
     @staticmethod
     def buscar_por_id(db: Session, id: int):
-        return db.query(Clients).filter(Clients.id == id).first()
-
+        return db.query(Productos).filter(Productos.id == id).first()
+    
     @staticmethod
-    def guardar_cambios_patch(db: Session, cliente: Clients) -> Clients:
+    def guardar_cambios_put(db: Session, producto_editado: dict) -> dict:
         db.commit()
-        db.refresh(cliente)
-        return cliente
+        db.refresh(producto_editado)
+        return producto_editado
 
     @staticmethod
-    def eliminar_cliente(db: Session, cliente: Clients) -> None:
-        db.delete(cliente)
+    def guardar_cambios_patch(db: Session, producto: Productos) -> Productos:
+        db.commit()
+        db.refresh(producto)
+        return producto
+
+    @staticmethod
+    def eliminar_producto(db: Session, producto: Productos) -> None:
+        db.delete(producto)
         db.commit()

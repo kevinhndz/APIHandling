@@ -1,4 +1,3 @@
-# modules/Clients/repository.py
 from sqlalchemy.orm import Session
 from modules.Clients.model import Clients
 
@@ -17,11 +16,15 @@ class ClientsRepository():
         return new_user
     
     @staticmethod
-    def crear_nuevo_customer(db: Session, new_customer:dict) -> dict:
+    def crear_nuevo_customer(db: Session, new_customer: dict) -> dict:
         db.add(new_customer)
         db.commit()         
         db.refresh(new_customer)
         return new_customer
+
+    @staticmethod
+    def obtener_clientes_paginados(db: Session, salto: int, limite: int):
+        return db.query(Clients).offset(salto).limit(limite).all()
     
     @staticmethod
     def revisar_duplicados_por_ID_put(db: Session, id: int) -> dict:
@@ -33,27 +36,20 @@ class ClientsRepository():
         db.commit()
         db.refresh(cliente_editado)
         return cliente_editado
-        
 
+    @staticmethod
+    def buscar_por_id(db: Session, id: int):
+        return db.query(Clients).filter(Clients.id == id).first()
 
-
-"""
-@router.put("/{id}")
-def editar(id: int, json: Revisar_JSON_Editar_Cliente, db: Session = Depends(abrir_puerta)):
-    
-    check = db.query(Clients).filter(Clients.id == id).first()
-    
-    if check is not None:
-        check.nombre = json.nombre
-        check.email = json.email
+    @staticmethod
+    def guardar_cambios_patch(db: Session, cliente: Clients) -> Clients:
         db.commit()
-        db.refresh(check)
-        return check
-    else:
-        raise HTTPException(
-            status_code= status.HTTP_404_NOT_FOUND,
-            detail = "No se encontro el recurso"
-        )
-        
+        db.refresh(cliente)
+        return cliente
 
-"""
+    @staticmethod
+    def eliminar_cliente(db: Session, cliente: Clients) -> None:
+        db.delete(cliente)
+        db.commit()
+
+

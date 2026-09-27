@@ -1,54 +1,45 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
-from modules.Clients.repository import ClientsRepository as repo
-from modules.Clients.model import Clients
-from modules.usuarios.model import Users
-from modules.Clients.schema import (
-    Revisar_JSON_Crear_Nuevo_Cliente, 
-    Revisar_JSON_Editar_Cliente,
-    Revisar_JSON_Editar_Cliente_Parcial
+from modules.productos.repository import ProductosRepository as repo
+from modules.productos.model import Productos
+from modules.productos.schema import (
+    Revisar_JSON_Crear_Producto, 
+    Revisar_JSON_Editar_Producto,
+    Revisar_JSON_Editar_Producto_Parcial
 )
-from utils.hash import encriptar_contrasena
 
-
-class ClientsService():
+class ProductosService():
     
     @staticmethod
-    def crear_cliente(db: Session, json: Revisar_JSON_Crear_Nuevo_Cliente):
-        
-        check = repo.revisar_duplicados(db, json)
+    def crear_producto(db: Session, json: Revisar_JSON_Crear_Producto):
+        check = repo.revisar_duplicados_codigo(db, json.codigo)
         
         if check is not None:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail="Cliente ya esta registrado"
+                detail="Producto con este codigo ya esta registrado"
             )
         else:
-            new_user = Users(
-                user=json.user,
-                password=encriptar_contrasena(json.password),
-                rol=json.rol
-            )
-            
-            new_u = repo.crear_nuevo_user(db, new_user)
-                
-            new_customer = Clients(
+            new_product = Productos(
                 nombre=json.nombre,
-                email=json.email,
-                id_user=new_user.id
+                stock=json.stock,
+                codigo=json.codigo
             )
             
-            new_c = repo.crear_nuevo_customer(db, new_customer)
-            return new_c
+            return repo.crear_nuevo_producto(db, new_product)
+
+    @staticmethod
+    def obtener_productos(db: Session, salto: int, limite: int):
+        return repo.obtener_productos_paginados(db, salto, limite)
     
     @staticmethod
-    def editar_cliente(db: Session, json: Revisar_JSON_Editar_Cliente, id: int):
-        
-        check = repo.revisar_duplicados_por_ID_put(db, id)
+    def editar_producto(db: Session, json: Revisar_JSON_Editar_Producto, id: int):
+        check = repo.buscar_por_id(db, id)
         
         if check is not None:
             check.nombre = json.nombre
-            check.email = json.email
+            check.stock = json.stock
+            check.codigo = json.codigo
             editado = repo.guardar_cambios_put(db, check)
             return editado
         else:
@@ -57,10 +48,8 @@ class ClientsService():
                 detail="No se encontro el recurso"
             )
 
-    # --- METODOS PARA PATCH Y DELETE ---
-
     @staticmethod
-    def editar_cliente_parcial(db: Session, json: Revisar_JSON_Editar_Cliente_Parcial, id: int):
+    def editar_producto_parcial(db: Session, json: Revisar_JSON_Editar_Producto_Parcial, id: int):
         check = repo.buscar_por_id(db, id)
         
         if check is None:
@@ -77,7 +66,7 @@ class ClientsService():
         return repo.guardar_cambios_patch(db, check)
 
     @staticmethod
-    def eliminar_cliente(db: Session, id: int):
+    def eliminar_producto(db: Session, id: int):
         check = repo.buscar_por_id(db, id)
         
         if check is None:
@@ -86,5 +75,5 @@ class ClientsService():
                 detail="No se encontro el recurso"
             )
             
-        repo.eliminar_cliente(db, check)
+        repo.eliminar_producto(db, check)
         return None

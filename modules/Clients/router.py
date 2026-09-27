@@ -4,11 +4,12 @@ from modules.Clients.model import Clients
 from database.almacen import abrir_puerta
 from sqlalchemy.orm import Session
 from modules.Clients.service import ClientsService as service
-
+from utils.auth import permiso_admin
 
 router = APIRouter(
     prefix = "/clients",
-    tags = ["Clients"]
+    tags = ["Clients"],
+    dependencies= [Depends(permiso_admin)]
 )
 
 @router.post("/", status_code= 201)

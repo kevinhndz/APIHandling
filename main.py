@@ -9,8 +9,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Crear tablas en la base de datos al arrancar
-miclaseBase.metadata.create_all(bind=motor)
 
 # Registrar rutas del modulo de productos
 app.include_router(router_productos)

@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from core.handlers import ExcepcionesGlobales as EH
 
 from modules.productos.router import router as router_productos
-from modules.Clients.router import router as router_clients
+from modules.Clients.router import router as router_clientes
 from modules.usuarios.router import router as router_usuarios
 
 # Configurar registros basicos en consola
@@ -21,7 +21,7 @@ origins = [
     "http://localhost",
     "http://localhost:3000",  # Frontend comun (React/NextJS)
     "http://localhost:5173",  # Frontend comun (Vite/Vue/React)
-    "*"                       # En desarrollo, '*' permite cualquier origen
+    
 ]
 
 app.add_middleware(
@@ -47,7 +47,7 @@ async def medir_tiempo_respuesta(request: Request, call_next):
 EH.registrar_handlers(app)
 
 
-# --- 4. Registrar Rutas de los Módulos ---
+# --- 4. Registrar Rutas de los Modulos ---
 app.include_router(router_productos)
-app.include_router(router_clients)
+app.include_router(router_clientes)
 app.include_router(router_usuarios)

@@ -2,7 +2,7 @@ import time
 import logging
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from core.handlers import GlobalExceptionHandler as EH
+from core.handlers import ExcepcionesGlobales as EH
 
 from modules.productos.router import router as router_productos
 from modules.Clients.router import router as router_clients
@@ -33,24 +33,14 @@ app.add_middleware(
 )
 
 
+# --- 2. Middleware Personalizado: Tiempo de Ejecución y Logs ---
 @app.middleware("http")
-def medir_tiempo_respuesta(request: Request, call_next):
-    # PASO 1: Arrancar el cronometro
+async def medir_tiempo_respuesta(request: Request, call_next):
     inicio = time.perf_counter()
-    
-    # PASO 2: Dejar pasar la peticion hacia los routers
-    response = call_next(request)
-    
-    # PASO 3: Calcular cuantos milisegundos pasaron desde que entro hasta que salio
-    tiempo_proceso = (time.perf_counter() - inicio) * 1000
-    
-    # PASO 4: Pegarle una etiqueta a la respuesta con el tiempo que tardo
+    response = await call_next(request) 
+    tiempo_proceso = (time.perf_counter() - inicio) * 1000  
     response.headers["X-Process-Time-Ms"] = f"{tiempo_proceso:.2f}"
-    
-    # PASO 5: Imprimir el reporte en la consola de tu terminal
     logger.info(f"Peticion: {request.method} {request.url.path} | Estado: {response.status_code} | Tiempo: {tiempo_proceso:.2f}ms")
-    
-    # PASO 6: Devolver la respuesta al cliente
     return response
 
 # --- 3. Registrar Manejadores Globale de Excepciones ---

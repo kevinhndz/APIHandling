@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta, timezone
-from fastapi import HTTPException, status
 from jose import JWTError, jwt
 from core.config import settings
+from core.exceptions import AccesoProhibidoError
 
 KEY = settings.SECRET_KEY
 
@@ -31,7 +31,4 @@ def verificar_token(token: str):
         return user_data
 
     except JWTError:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, 
-            detail="Session expirada"
-        )
+        raise AccesoProhibidoError("Session expirada")

@@ -1,4 +1,3 @@
-from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 from modules.Clients.repository import ClientsRepository as repo
 from modules.Clients.model import Clients
@@ -9,6 +8,7 @@ from modules.Clients.schema import (
     Revisar_JSON_Editar_Cliente_Parcial
 )
 from utils.hash import encriptar_contrasena
+from core.exceptions import RecursoNoEncontradoError, RecursoDuplicadoError
 
 
 class ClientsService():
@@ -18,10 +18,7 @@ class ClientsService():
         check = repo.revisar_duplicados(db, json)
         
         if check is not None:
-            raise HTTPException(
-                status_code=status.HTTP_409_CONFLICT,
-                detail="Cliente ya esta registrado"
-            )
+            raise RecursoDuplicadoError("Cliente ya esta registrado")
         else:
             new_user = Users(
                 user=json.user,
@@ -54,20 +51,14 @@ class ClientsService():
             editado = repo.guardar_cambios_put(db, check)
             return editado
         else:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="No se encontro el recurso"
-            )
+            raise RecursoNoEncontradoError("No se encontro el recurso")
 
     @staticmethod
     def editar_cliente_parcial(db: Session, json: Revisar_JSON_Editar_Cliente_Parcial, id: int):
         check = repo.buscar_por_id(db, id)
         
         if check is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="No se encontro el recurso"
-            )
+            raise RecursoNoEncontradoError("No se encontro el recurso")
         
         datos_actualizar = json.model_dump(exclude_unset=True)
         
@@ -81,10 +72,7 @@ class ClientsService():
         check = repo.buscar_por_id(db, id)
         
         if check is None:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="No se encontro el recurso"
-            )
+            raise RecursoNoEncontradoError("No se encontro el recurso")
             
         repo.eliminar_cliente(db, check)
         return None

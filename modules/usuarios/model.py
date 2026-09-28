@@ -1,7 +1,9 @@
 from sqlalchemy import Integer, String, Column, ForeignKey
 from database.almacen import miclaseBase
+from sqlalchemy.orm import relationship
+from database.base import PoderAuditor
 
-class Users (miclaseBase):
+class Users (miclaseBase, PoderAuditor):
     
     __tablename__ = "Users"
     
@@ -9,4 +11,4 @@ class Users (miclaseBase):
     user = Column(String, nullable= False,unique = True)
     password = Column(String, nullable = False)
     rol = Column(String, nullable=False)
-    
+    clientes = relationship("Cliente", back_populates="usuario")

@@ -25,8 +25,14 @@ class ProductosService():
         return repo.crear_nuevo_producto(db, new_product)
 
     @staticmethod
-    def obtener_productos(db: Session, salto: int, limite: int):
-        return repo.obtener_productos_paginados(db, salto, limite)
+    def obtener_productos_service(db: Session, salto: int, limite: int):
+        resultado = repo.obtener_productos(db, salto, limite)
+        
+        if resultado is None:
+            raise RecursoNoEncontradoError("No hay productos registrados")
+        else:
+            return resultado
+        
     
     @staticmethod
     def editar_producto(db: Session, json: Revisar_JSON_Editar_Producto, id: int):

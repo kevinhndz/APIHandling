@@ -1,3 +1,4 @@
+import math
 from sqlalchemy.orm import Session
 from modules.productos.model import Productos
 
@@ -16,8 +17,20 @@ class ProductosRepository():
         return new_product
 
     @staticmethod
-    def obtener_productos_paginados(db: Session, salto: int, limite: int):
-        return db.query(Productos).offset(salto).limit(limite).all()
+    def obtener_productos(db: Session, salto: int, limite: int):
+        total_registros = db.query(Productos).count()
+        productos = db.query(Productos).offset(salto).limit(limite).all()
+        
+        pagina_actual = (salto // limite) + 1
+        total_paginas = math.ceil(total_registros / limite) if total_registros > 0 else 1
+        
+        return {
+            "total": total_registros,
+            "pagina_actual": pagina_actual,
+            "limite": limite,
+            "total_paginas": total_paginas,
+            "data": productos
+        }
 
     @staticmethod
     def buscar_por_id(db: Session, id: int):

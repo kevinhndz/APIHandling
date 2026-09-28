@@ -4,8 +4,10 @@ from database.almacen import abrir_puerta
 from modules.productos.schema import (
     Revisar_JSON_Crear_Producto, 
     Revisar_JSON_Editar_Producto,
-    Revisar_JSON_Editar_Producto_Parcial
+    Revisar_JSON_Editar_Producto_Parcial,
+    ProductoRespuesta
 )
+from core.schema import RespuestaPaginada
 from modules.productos.service import ProductosService as service
 from utils.auth import permiso_admin, permiso_usuario
 
@@ -23,14 +25,15 @@ def crear_nuevo_producto(
 ):
     return service.crear_producto(db, json)
 
-@router.get("/")
+@router.get("/",response_model=RespuestaPaginada[ProductoRespuesta],
+    status_code=status.HTTP_200_OK)
 def obtener_productos(
     salto: int = Query(default=0, ge=0),
     limite: int = Query(default=10, ge=1),
     db: Session = Depends(abrir_puerta),
     usuario: dict = Depends(permiso_admin)
 ):
-    return service.obtener_productos(db, salto, limite)
+    return service.obtener_productos_service(db, salto, limite)
 
 @router.put("/{id}")
 def editar(

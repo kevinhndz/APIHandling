@@ -10,4 +10,5 @@ class Users(miclaseBase, PoderAuditor):
     user = Column(String, nullable=False, unique=True)
     password = Column(String, nullable=False)
     rol = Column(String, nullable=False)
-    clients = relationship("Clients", back_populates="usuario")
+    
+    clients = relationship("Clients", back_populates="usuario", cascade="all, delete-orphan")

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f6f8">
+  <title>Almacén | Iniciar sesión</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <section class="login-layout" aria-labelledby="login-title">
+      <div class="login-aside">
+        <a class="brand brand-light" href="/" aria-label="Almacén, inicio"><span class="brand-mark">A</span><span>almacén<span class="brand-dot">.</span></span></a>
+        <div class="aside-copy"><span class="eyebrow">CONTROL DE INVENTARIO</span><h1>Todo tu almacén,<br>en un solo lugar.</h1><p>Consulta existencias y administra la información de tus clientes desde un espacio claro y sencillo.</p></div>
+        <div class="aside-foot"><span class="status-dot"></span> Plataforma de gestión</div>
+      </div>
+      <div class="login-main">
+        <form id="login-form" class="login-card">
+          <div class="mobile-brand brand"><span class="brand-mark">A</span><span>almacén<span class="brand-dot">.</span></span></div>
+          <span class="eyebrow">BIENVENIDO DE NUEVO</span><h2 id="login-title">Iniciar sesión</h2>
+          <p class="muted">Ingresa tus credenciales para continuar.</p>
+          <label for="username">Usuario</label><input id="username" name="user" type="text" minlength="5" maxlength="16" autocomplete="username" placeholder="Tu nombre de usuario" required>
+          <label for="password">Contraseña</label><input id="password" name="password" type="password" minlength="6" maxlength="20" autocomplete="current-password" placeholder="Tu contraseña" required>
+          <button class="button button-primary button-full" type="submit"><span>Entrar al panel</span><span aria-hidden="true">→</span></button>
+          <p id="login-message" class="form-message" role="alert" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+  <noscript>Para usar el panel necesitas habilitar JavaScript.</noscript>
+</body>
+</html>

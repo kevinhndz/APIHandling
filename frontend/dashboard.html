@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f6f8">
+  <title>Almacén | Panel de control</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <section id="dashboard" class="app-layout">
+    <aside class="sidebar">
+      <a class="brand" href="/dashboard.html"><span class="brand-mark">A</span><span>almacén<span class="brand-dot">.</span></span></a>
+      <div class="nav-caption">ESPACIO DE TRABAJO</div>
+      <nav aria-label="Módulos">
+        <button class="nav-link active" type="button" data-module="products"><span class="nav-icon">▦</span>Productos</button>
+        <button class="nav-link" type="button" data-module="clients"><span class="nav-icon">♧</span>Clientes</button>
+      </nav>
+      <div class="sidebar-bottom"><div class="sidebar-note"><span class="status-dot"></span><span>Conexión activa</span></div><button id="logout-button" class="logout-button" type="button"><span>↪</span> Cerrar sesión</button></div>
+    </aside>
+    <div class="main-column">
+      <header class="topbar"><div class="breadcrumb">Panel <span>/</span> <strong id="breadcrumb-current">Productos</strong></div><div class="user-area"><div class="avatar" id="user-avatar">U</div><div><strong id="current-user">Usuario</strong><span id="current-role">Admin</span></div></div></header>
+      <main id="dashboard-content" class="content">
+        <div class="page-heading"><div><span class="eyebrow" id="page-kicker">INVENTARIO</span><h1 id="page-title">Productos</h1><p id="page-description">Administra los productos registrados en tu almacén.</p></div><div class="heading-actions"><button id="refresh-button" class="button button-quiet" type="button"><span class="refresh-icon">↻</span> Actualizar</button><button id="create-button" class="button button-primary" type="button">+ Nuevo producto</button></div></div>
+        <div id="notice" class="notice" role="status" hidden></div>
+        <section class="data-card" aria-label="Listado de datos">
+          <div class="table-toolbar"><div><h2 id="table-title">Listado de productos</h2><p>Datos sincronizados con el servidor</p></div><label class="page-size">Filas <select id="page-size"><option value="10">10</option><option value="20">20</option><option value="50">50</option></select></label></div>
+          <div class="table-wrap"><table><thead id="table-head"></thead><tbody id="table-body"></tbody></table><div id="empty-state" class="empty-state" hidden><span class="empty-icon">⌕</span><strong>No hay registros para mostrar</strong><span>Usa el botón de arriba para crear el primer registro.</span></div></div>
+          <footer class="table-footer"><span id="result-count">Cargando datos…</span><div class="pagination"><button id="prev-page" type="button" aria-label="Página anterior">←</button><span id="page-indicator">Página 1</span><button id="next-page" type="button" aria-label="Página siguiente">→</button></div></footer>
+        </section>
+        <p class="content-foot">Los datos se consultan en tiempo real desde el servidor.</p>
+      </main>
+      <main id="access-denied" class="access-denied" hidden><div class="access-icon">!</div><span class="eyebrow">ACCESO RESTRINGIDO</span><h1>Se requiere una cuenta Admin</h1><p>El backend protege los listados de productos y clientes para cuentas con rol Admin.</p><p>Sesión iniciada como <strong id="access-user"></strong>.</p><button id="denied-logout" class="button button-primary" type="button">Cerrar sesión</button></main>
+    </div>
+  </section>
+
+  <dialog id="record-modal" class="record-modal">
+    <form id="record-form" method="dialog">
+      <div class="modal-heading"><div><span class="eyebrow">GESTIÓN DE DATOS</span><h2 id="modal-title">Nuevo registro</h2><p id="modal-description">Completa los datos requeridos.</p></div><button id="modal-close" class="modal-close" type="button" aria-label="Cerrar">×</button></div>
+      <div id="modal-fields" class="modal-fields"></div>
+      <div class="modal-actions"><button id="modal-cancel" class="button button-quiet" type="button">Cancelar</button><button id="modal-save" class="button button-primary" type="submit">Guardar</button></div>
+    </form>
+  </dialog>
+  <noscript>Para usar el panel necesitas habilitar JavaScript.</noscript>
+</body>
+</html>

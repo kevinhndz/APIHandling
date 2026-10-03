@@ -18,8 +18,16 @@
     if (token) headers.set('token', token);
     if (options.body) headers.set('Content-Type', 'application/json');
     let response;
-    try { response = await fetch(`${apiBase()}${path}`, {...options, headers}); }
-    catch (_) { throw new Error('No se pudo conectar con la API. Revisa que el servidor esté activo.'); }
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 15000);
+    try {
+      response = await fetch(`${apiBase()}${path}`, {...options, headers, signal: controller.signal});
+    } catch (error) {
+      if (error.name === 'AbortError') throw new Error('La API tardó demasiado en responder. Verifica que el backend esté activo.');
+      throw new Error('No se pudo conectar con la API. Revisa que el servidor esté activo.');
+    } finally {
+      window.clearTimeout(timeout);
+    }
     if (response.status === 401 || response.status === 403) {
       if (response.status === 401 && path !== '/login/') {
         localStorage.removeItem(TOKEN_KEY);
@@ -45,7 +53,7 @@
     const message = $('#login-message');
     const submit = loginForm.querySelector('button[type="submit"]');
     const storedApi = localStorage.getItem(API_KEY);
-    if (storedApi) apiInput.value = storedApi;
+    if (storedApi && apiInput) apiInput.value = storedApi;
     if (localStorage.getItem(TOKEN_KEY)) { window.location.replace('/dashboard.html'); return; }
     loginForm.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -53,7 +61,8 @@
       submit.disabled = true;
       submit.querySelector('span').textContent = 'Verificando…';
       message.textContent = '';
-      localStorage.setItem(API_KEY, (apiInput.value.trim() || 'http://127.0.0.1:8000').replace(/\/+$/, ''));
+      const configuredApi = apiInput?.value?.trim() || storedApi || 'http://127.0.0.1:8000';
+      localStorage.setItem(API_KEY, configuredApi.replace(/\/+$/, ''));
       try {
         const result = await request('/login/', {method:'POST', body:JSON.stringify({user:values.get('user'), password:values.get('password')})});
         if (!result.token) throw new Error('La respuesta del servidor no incluyó un token.');
